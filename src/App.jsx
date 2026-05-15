@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import { login } from "./services/loginService";
 import Home from "./pages/home";
+import Cookies from 'js-cookie'
 
 function App() {
   const [usuario, setUsuario] = useState("");
@@ -9,10 +10,17 @@ function App() {
 
   async function loginFront() {
     try {
-      await login(usuario, senha);
+      const data = await login(usuario, senha);
+      Cookies.set("nome", usuario, { expires: 7 });
+      Cookies.set("senha", senha, { expires: 7 });
+
+      console.log(data);
+
+      window.location.href = "/pages/home";
+
     } catch (error) {
-      console.error("Erro ao logar:", error);
-      alert("Usuário ou senha incorretos!");
+      console.error("Erro capturado:", error.message);
+      alert("Falha no login: " + error.message);
     }
   }
 
